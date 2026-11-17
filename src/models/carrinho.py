@@ -1,92 +1,92 @@
-"""
-Classe Carrinho (aula de 10/11).
-
-Fontes para estudar:
-- Listas: append e remove:
-  https://docs.python.org/pt-br/3/tutorial/datastructures.html#more-on-lists
-- Laço for:
-  https://docs.python.org/pt-br/3/tutorial/controlflow.html#for-statements
-- Parâmetro opcional (valor padrão):
-  https://docs.python.org/pt-br/3/tutorial/controlflow.html#default-argument-values
-- Atributos privados (__nome) e protegidos (_nome):
-  https://docs.python.org/pt-br/3/tutorial/classes.html#private-variables
-- raise: como gerar um erro:
-  https://docs.python.org/pt-br/3/tutorial/errors.html#raising-exceptions
-- Livro: GUEDES, G. T. A. UML 2: uma abordagem prática. 3. ed. Novatec, 2018.
-"""
 
 from models.item_carrinho import ItemCarrinho
 
 
 class Carrinho:
     """
-    Carrinho de compras de um cliente.
-
-    COMPOSIÇÃO: o carrinho é quem cria e guarda os objetos ItemCarrinho.
-    Os itens ficam numa LISTA de objetos.
+    Classe que controla os produtos escolhidos pelo cliente.
     """
 
     def __init__(self):
-        self.__itens = []    # lista de objetos ItemCarrinho
+        # Inicializa o carrinho sem nenhum produto
+        self.__itens = []
 
     @property
     def itens(self):
-        # Devolve uma CÓPIA da lista, para ninguém alterar a original por fora
+        # Disponibiliza uma cópia dos produtos armazenados
         return list(self.__itens)
 
     def __buscar_item(self, produto):
-        """Método PRIVADO: procura o item de um produto na lista."""
+        # Verifica se o produto já foi adicionado
         for item in self.__itens:
             if item.produto is produto:
                 return item
         return None
 
     def adicionar(self, produto, quantidade=1):
-        """Coloca um produto no carrinho (ou aumenta a quantidade, se já estiver lá)."""
+        # Impede que seja adicionada uma quantidade inválida
         if quantidade <= 0:
-            raise ValueError("A quantidade precisa ser maior que zero.")
+            raise ValueError("A quantidade deve ser maior que zero.")
 
+        # Confere se o produto já existe na lista
         item = self.__buscar_item(produto)
         quantidade_total = quantidade
+
         if item is not None:
             quantidade_total += item.quantidade
 
-        if not produto.tem_estoque(quantidade_total):        # RN4
+        # Confirma se há unidades suficientes no estoque
+        if not produto.tem_estoque(quantidade_total):
             raise ValueError(
                 f"Só há {produto.estoque} unidade(s) de {produto.nome} em estoque."
             )
 
+        # Atualiza o produto existente ou adiciona um novo
         if item is not None:
-            item.aumentar(quantidade)                          # RN5
+            item.aumentar(quantidade)
         else:
             self.__itens.append(ItemCarrinho(produto, quantidade))
 
     def remover(self, produto):
-        """Tira um produto do carrinho."""
+        # Procura o produto que o cliente deseja retirar
         item = self.__buscar_item(produto)
+
         if item is None:
             raise ValueError(f"{produto.nome} não está no carrinho.")
+
+        # Exclui o produto encontrado da lista
         self.__itens.remove(item)
 
     def total(self):
-        """Soma os subtotais de todos os itens."""
+        # Calcula a soma dos valores dos produtos
         soma = 0.0
+
         for item in self.__itens:
             soma += item.subtotal()
+
+        # Ajusta o resultado para duas casas decimais
         return round(soma, 2)
 
     def esta_vazio(self):
+        # Retorna verdadeiro quando não existem produtos
         return len(self.__itens) == 0
 
     def limpar(self):
-        """Esvazia o carrinho (RN7: depois de confirmar o pedido)."""
+        # Deixa o carrinho completamente vazio
         self.__itens = []
 
     def __str__(self):
+        # Verifica se existe algum produto no carrinho
         if self.esta_vazio():
             return "Carrinho vazio."
+
+        # Organiza as informações dos produtos
         linhas = []
+
         for item in self.__itens:
             linhas.append(str(item))
+
+        # Exibe o valor final da compra
         linhas.append(f"TOTAL: R$ {self.total():.2f}")
+
         return "\n".join(linhas)
