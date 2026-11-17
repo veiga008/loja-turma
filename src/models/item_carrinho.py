@@ -1,44 +1,37 @@
-"""
-Classe ItemCarrinho (aula de 10/11).
-
-Fontes para estudar:
-- Classes, objetos, atributos e métodos:
-  https://docs.python.org/pt-br/3/tutorial/classes.html
-- @property (ler um atributo privado):
-  https://docs.python.org/pt-br/3/library/functions.html#property
-- round (arredondar):
-  https://docs.python.org/pt-br/3/library/functions.html#round
-- f-string (texto com variáveis):
-  https://docs.python.org/pt-br/3/tutorial/inputoutput.html#formatted-string-literals
-"""
-
 
 class ItemCarrinho:
     """
-    Uma linha do carrinho: QUAL produto e QUANTAS unidades.
-
-    Quem cria os itens é o Carrinho (composição): o item não existe sozinho.
+    Representa um item dentro do carrinho de compras.
+    Armazena qual é o produto e a quantidade escolhida.
     """
 
+    # Método construtor: executado quando criamos um novo item.
     def __init__(self, produto, quantidade):
-        self.__produto = produto        # associação: ItemCarrinho -> Produto
+
+        # Atributos privados: guardam os dados do item.
+        self.__produto = produto
         self.__quantidade = quantidade
 
+    # @property permite consultar o produto sem acessar diretamente o atributo privado.
     @property
     def produto(self):
         return self.__produto
 
+    # Permite consultar a quantidade do produto.
     @property
     def quantidade(self):
         return self.__quantidade
 
+    # Método para aumentar a quantidade de produtos no carrinho.
     def aumentar(self, quantidade):
-        """Soma mais unidades ao item (RN5: produto repetido aumenta a quantidade)."""
         self.__quantidade += quantidade
 
+    # Calcula o subtotal: preço do produto multiplicado pela quantidade.
+    # round arredonda o resultado para duas casas decimais.
     def subtotal(self):
-        """Preço do produto x quantidade."""
         return round(self.__produto.preco * self.__quantidade, 2)
 
+    # Retorna uma representação do item em formato de texto.
+    # f-string permite inserir valores dentro do texto.
     def __str__(self):
         return f"{self.__quantidade}x {self.__produto.nome} = R$ {self.subtotal():.2f}"
